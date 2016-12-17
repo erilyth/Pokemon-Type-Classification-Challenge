@@ -14,6 +14,8 @@ import numpy as np
 import math
 import matplotlib as plt
 import random
+from sklearn import decomposition
+from sklearn.svm import SVC
 
 # Give a class ID to each output type
 classes = {}
@@ -42,8 +44,9 @@ def get_data(data_file):
 			current_class_id += 1
 	return data, labels
 
-train_data, train_labels = get_data('Pokemon.csv')
-print train_data
-print train_labels
-print current_class_id
-print classes
+def normalize_data(data):
+	data = np.asarray(data,dtype=np.float32)
+	mean = data.mean(axis=0)
+	std = data.std(axis=0)
+	data = (data - mean) / std
+	return data
