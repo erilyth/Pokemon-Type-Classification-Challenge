@@ -11,6 +11,7 @@
 """
 
 from preprocess import *
+import tfnet
 
 train_data, train_labels_temp = get_data('Pokemon.csv')
 train_labels = []
@@ -32,3 +33,5 @@ for point in range(len(train_data)):
 		accuracy += 1.0
 accuracy = accuracy / len(train_data) * 100.0
 print accuracy
+
+print tfnet.main(train_data, train_labels)
