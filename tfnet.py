@@ -15,7 +15,7 @@ import random
 
 # Hyperparameters
 learning_rate = 0.001
-training_epochs = 500
+training_epochs = 100
 
 # Network
 n_hidden_1 = 512 # 1st layer number of features

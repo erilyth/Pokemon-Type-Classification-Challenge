@@ -14,8 +14,6 @@ from preprocess import *
 import tfnet
 import warnings
 import numpy as np
-from sklearn import decomposition
-from sklearn.svm import SVC
 from random import sample
 # Ignore deprecation warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning) 

@@ -12,7 +12,6 @@
 
 import numpy as np
 import math
-import matplotlib as plt
 import random
 
 # Give a class ID to each output type
