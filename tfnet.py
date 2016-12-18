@@ -11,30 +11,38 @@
 """
 
 import tensorflow as tf
+import random
 
 # Hyperparameters
 learning_rate = 0.001
-training_epochs = 10000
+training_epochs = 500
 
 # Network
-n_hidden_1 = 256 # 1st layer number of features
-n_hidden_2 = 128 # 2nd layer number of features
-n_input = 5 # After performing PCA the input size becomes 5
+n_hidden_1 = 512 # 1st layer number of features
+n_hidden_2 = 256 # 2nd layer number of features
+n_input = 7 # After performing PCA the input size becomes 5
 n_classes = 19 # The different types of a Pokemon
 
-def main(data, labels):
-
+def main(train_data, train_labels, test_data, test_labels):
 	# Create a one hot representation of the labels
-	labels_new = []
-	for lab in labels:
+	train_labels_new = []
+	test_labels_new = []
+	for lab in train_labels:
 		label_new = []
 		for lab_test in range(1,20):
 			if lab == lab_test:
 				label_new.append(1)
 			else:
 				label_new.append(0)
-		labels_new.append(label_new)
-	print labels_new
+		train_labels_new.append(label_new)
+	for lab in test_labels:
+		label_new = []
+		for lab_test in range(1,20):
+			if lab == lab_test:
+				label_new.append(1)
+			else:
+				label_new.append(0)
+		test_labels_new.append(label_new)
 
 	X = tf.placeholder("float", [None, n_input])
 	Y = tf.placeholder("float", [None, n_classes])
@@ -64,12 +72,12 @@ def main(data, labels):
 		ses.run(init)
 		for ep in range(training_epochs):
 			loss_avg = 0
-			for point in range(len(data)):
-				_, c = ses.run([optimizer, cost], feed_dict={X:[data[point]], Y:[labels_new[point]]})
+			for point in range(len(train_data)):
+				_, c = ses.run([optimizer, cost], feed_dict={X:[train_data[point]], Y:[train_labels_new[point]]})
 				loss_avg += c
-		print "Epoch " + ep + ", " + "Loss " + loss_avg
+			print "Epoch " + str(ep) + ", " + "Loss " + str(loss_avg/len(train_data))
 
-	# Test the trained model
-	correct_pred = tf.equal(tf.argmax(out_layer, 1), tf.argmax(labels_new, 1))
-	accuracy = tf.reduce_mean(tf.cast(correct_pred, "float"))
-	print "Accuracy " + accuracy.eval({X:data, Y:labels_new})   
+		# Test the trained model
+		correct_pred2 = tf.nn.in_top_k(out_layer, tf.cast(tf.argmax(Y,1), "int32"), 5)
+		accuracy2 = tf.reduce_mean(tf.cast(correct_pred2, "float"))
+		print "Accuracy " + str(accuracy2.eval({X:test_data, Y:test_labels_new})*100)

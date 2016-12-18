@@ -14,8 +14,6 @@ import numpy as np
 import math
 import matplotlib as plt
 import random
-from sklearn import decomposition
-from sklearn.svm import SVC
 
 # Give a class ID to each output type
 classes = {}

@@ -12,26 +12,38 @@
 
 from preprocess import *
 import tfnet
+import warnings
+import numpy as np
+from sklearn import decomposition
+from sklearn.svm import SVC
+from random import sample
+# Ignore deprecation warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
-train_data, train_labels_temp = get_data('Pokemon.csv')
+data, labels_temp = get_data('Pokemon.csv')
+labels = []
+for label in labels_temp:
+	labels.append(classes[label])
+data = normalize_data(data)
+
+# Split data into 1/10 test and 9/10 train
+start_idx = 0
+indices = sorted(sample(range(len(data)), len(data)/10))
+test_data = []
+test_labels = []
+train_data = []
 train_labels = []
-for label in train_labels_temp:
-	train_labels.append(classes[label])
-train_data = normalize_data(train_data)
 
-# Apply Principal Component Analysis to select the best representative feature combinations
-pca = decomposition.PCA(n_components=5)
-pca.fit(train_data)
-train_data = pca.transform(train_data)
+print indices
 
-# Apply an SVM to check how it performs, we get around 36% accuracy
-accuracy = 0.0
-svm = SVC()
-svm.fit(train_data, train_labels)
-for point in range(len(train_data)):
-	if svm.predict(train_data[point]) == train_labels[point]:
-		accuracy += 1.0
-accuracy = accuracy / len(train_data) * 100.0
-print accuracy
+for i in range(len(data)):
+	if start_idx < len(indices) and indices[start_idx] == i:
+		test_data.append(data[i])
+		test_labels.append(labels[i])
+		start_idx += 1
+	else:
+		train_data.append(data[i])
+		train_labels.append(labels[i])
 
-print tfnet.main(train_data, train_labels)
+print len(train_data), len(test_data)
+tfnet.main(train_data, train_labels, test_data, test_labels)
